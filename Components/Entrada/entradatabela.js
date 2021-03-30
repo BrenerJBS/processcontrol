@@ -9,6 +9,10 @@ import styles from '../../Form/Input.module.css'
 import Button from '../../Form/Button';
 import { database } from '../../utils/firebaseUtils';
 import { snapshotToArray } from '../Helper/SnaptoArray';
+import { multiPropsFilter } from '../Helper/Filter';
+import { filtrosSelecionados } from '../Helper/Filter';
+
+
 import stylesE from '../Entrada/entrada.module.css'
 import stylesB from '../../Form/Button.module.css'
 import {getCurrentDate} from '../Helper/DateCurrent'
@@ -43,9 +47,10 @@ const EntradaTabela = () => {
 
   const [carregando, setCarregando] = React.useState(true);
 
-  const [filtro, setFiltro] = React.useState({auditor: true, confrecebimento: true});
-  const [filtrosColetados, setFiltrosColetados] = React.useState({auditor: '', confrecebimento: '' });
- // const [filtroRecebidos, setFiltroRecebidos] = React.useState(false);
+  const [filtro,setFiltro] = React.useState({auditor: false, recebimento: false, 
+    suspensao: false, despacho: false, tipo: false, notificacao: false})
+  let filtrosColetados = {auditor: '', recebimento: '', suspensao: '', despacho: '', tipo: '', notificacao: ''}
+  const [filtros, setFiltros]  =  React.useState({auditor:''});
 
 
   React.useEffect(()=> {
@@ -58,8 +63,7 @@ const EntradaTabela = () => {
   React.useEffect(()=> {
     const assuntoRef = database.ref('lista_assuntos');
     assuntoRef.once('value', (snapshot) => {
-      setAssuntos(snapshotToArray(snapshot));        
-    
+      setAssuntos(snapshotToArray(snapshot));  
   });
   },[])
 
@@ -110,14 +114,12 @@ const EntradaTabela = () => {
         }
         return task;
       });
-      console.log (name, value)
       atualizarFB(key, value, name)
       setDados(editedRequerente);
     } 
   }  
 
-  function writeNewEntrada() {
-  
+  function writeNewEntrada() {  
     var newEntradaKey = database.ref().child('entrada').push().key;
     var entradaData = {
       processo: processo.value,
@@ -145,8 +147,7 @@ const EntradaTabela = () => {
     return database.ref().update(updates);
   }
 
-  function updateEntrada() {
-    
+  function updateEntrada() {    
     var entradaData = {
       processo: processo.value,
       data: dataEntrada,
@@ -203,13 +204,9 @@ const EntradaTabela = () => {
           tipo: task.tipo,  
           disabled: true,
           key: task.key    
-        };
-        
+        };        
       }
-
     });
-  
-  
     // Write the new post's data simultaneously in the posts list and the user's post list.
     var updates = {};
     updates['/entrada/' + editkey] = entradaData;  
@@ -278,64 +275,106 @@ const EntradaTabela = () => {
       setRecebimento(false)        
       setSuspensao('')
       setDespacho('')  
-
-     
+    }
     }
 
-    else
-      console.log("não enviar")
+    function handleFilter({target}){  
+      if (target.id === 'suspensao' || target.id === 'auditor' || target.id === 'assunto' || target.id === 'tipo'){
+        if (target.value === ''){
+          setFiltros({...filtros, [target.id]: ''})
+          setFiltro({...filtro, [target.id]: false})
+        }else{
+          setFiltros({...filtros, [target.id]: target.value})
+          setFiltro({...filtro, [target.id]: true})
+        }
+      } else{
+        setFiltros({...filtros, [target.id]: target.value})
+        setFiltro(prevFiltro => ({...filtro, [target.id]: !prevFiltro[target.id]}))
+      }     
     }
-
-    function handleBusca({target}){  
-      setFiltro(prevState => ({...filtro, [target.id]: !prevState[target.id]})  )  
-      
-     
-
-    }
-
-    function filtrosSelecionados(){
-      if (filtro.auditor === true){
-        setFiltrosColetados({...filtrosColetados, auditor: window.localStorage.getItem('token') })
-      }
-      if (filtro.naorecebidos === true){
-        setFiltrosColetados({...filtrosColetados, confrecebimento: false})
-      }
-
-      return filtrosColetados
-    }
-
-    const multiPropsFilter = (products, filters) => {
-      const filterKeys = Object.keys(filters);
-      return products.filter(product => {
-        return filterKeys.every(key => {
-          if (!filters[key].length) return true;
-          // Loops again if product[key] is an array (for material attribute).
-          if (Array.isArray(product[key])) {
-            return product[key].some(keyEle => filters[key].includes(keyEle));
-          }
-          return filters[key].includes(product[key]);
-        });
-      });
-    };
-
 
 
   return (
      
       <>
-      <button id='auditor' value='auditor' className={stylesB.buttonEdit} onClick={handleBusca}>{auditores && nomeAuditor(window.localStorage.getItem('token'), auditores)}</button>
-      <button id='todosauditores' value='allauditor' className={stylesB.buttonEdit} onClick={handleBusca}>Todos</button>
-      <button id='naorecebidos' value='naorecebidos' className={stylesB.buttonMore} onClick={handleBusca}>Não Recebidos</button>
-      <button id='todosrecebidos' value='allrecebidos' className={stylesB.buttonMore } onClick={handleBusca}>Todos</button>
-
-     
-
+      <div style={{ width: '90%', margin: 'auto', marginBottom:'80px', padding: '10px'}}>
+        <div style={{width: '25%',float: 'left'}}>FILTROS MAIS UTILIZADOS
+          <div>
+          <button id='auditor' value={window.localStorage.getItem('token')} className={
+            filtros.auditor === window.localStorage.getItem('token') ? stylesB.filterOn : stylesB.filterOff
+            } onClick={handleFilter}>{auditores && nomeAuditor(window.localStorage.getItem('token'), auditores)}</button>
+            <button id='prioridade' value={!filtro.prioridade} className={filtro.prioridade ? stylesB.filterOnP : stylesB.filterOff} onClick={handleFilter}>Prioridade</button>
+            <button id='recebimento' value={filtro.recebimento} className={filtro.recebimento ? stylesB.filterOn : stylesB.filterOff} onClick={handleFilter}>Não Recebidos</button>
+            <button id='notificacao' value={!filtro.notificacao} className={filtro.notificacao ? stylesB.filterOn : stylesB.filterOff} onClick={handleFilter}>Notificado</button>
+            
+          </div>
+        </div>
+        <div style={{width: '75%', float: 'left'}}>OUTROS FILTROS
+          <div style={{display: 'flex'}}>              
+              <label>Tipo
+                <div style={{display: 'block'}}>
+                  <select id='tipo' name='tipo' onChange={handleFilter}  value={filtros.tipo} >
+                    <option value=''>TODOS</option>
+                    <option key='0' value='processo'>PROCESSO</option>
+                    <option key='1' value='oficio'>OFÍCIO</option>     
+                  </select>
+                </div> 
+              </label>  
+              <div style={{display: 'flex', marginLeft:'15px'}}>      
+            {assuntos && 
+              <label>Assuntos
+                <div style={{display: 'block'}}>
+                  <select id='assunto' name='assunto' onChange={handleFilter}  value={filtros.assunto} >
+                    <option value=''>TODOS</option>
+                      {assuntos.map((option) => <option key={option.key} value={option.key}>{option.assunto}</option>)}       
+                  </select>
+                </div> 
+              </label> } 
+              </div>  
+              <div style={{display: 'flex', marginLeft:'15px'}}>
+            {auditores && 
+              <label>Auditores
+                <div style={{display: 'block'}}>
+                  <select id='auditor' name='auditor' onChange={handleFilter}  value={filtros.auditor} >
+                    <option value=''>TODOS</option>
+                      {auditores.map((option) => <option key={option.key} value={option.key}>{option.nome}</option>)}       
+                  </select>
+                </div> 
+              </label> }   
+            </div>                  
+            <div style={{display: 'flex', marginLeft:'15px'}}>
+              <label>Suspensão
+                <div style={{display: 'block'}}>
+                  <select id='suspensao' name='suspensao' onChange={handleFilter} >
+                    <option value=''>TODOS</option>
+                    <option key='0' value='NÃO'>NÃO</option>
+                    <option key='1' value='SIM'>SIM</option>
+                  </select>
+                </div> 
+              </label>
+            </div>
+            <div style={{display: 'flex', marginLeft:'15px'}}>
+              <label>DESPACHO
+                <div style={{display: 'block'}}>
+                  <select id='despacho' name='despacho' onChange={handleFilter} >
+                    <option value=''>TODOS</option>
+                    <option key='0' value='NÃO'>NÃO</option>
+                    <option key='1' value='SIM'>SIM</option>
+                  </select>
+                </div> 
+              </label>
+            </div>               
+              
+            
+          </div>        
+        </div>
+      </div>
       <table class="containerExcel">
         <Entradathead />
         <tbody>
           {carregando ? <p style={{marginLeft:'10px'}}>Carregando... Aguarde</p> : 
           <>         
-          {dados.map((dado) => {
+          {multiPropsFilter(dados,filtrosSelecionados(filtro, filtrosColetados, filtros)).map((dado) => {
             return (                          
               <tr key={dado.key}>                           
                 <td>

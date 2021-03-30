@@ -34,6 +34,61 @@
   transition: 0.1s;
 }
 
+.filterOn{
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.4rem;
+  background-color: #4CAF50;
+  color: white;
+  box-sizing: border-box;
+  transition: 0.1s;
+}
+.filterOff{
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.4rem;
+  background-color: #DCDCDC;
+  color: white;
+  box-sizing: border-box;
+  transition: 0.1s;
+}
+
+.filterOnP{
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.4rem;
+  background-color: #c21807;
+  color: white;
+  box-sizing: border-box;
+  transition: 0.1s;
+}
+
+.filterOn:hover,
+.filterOn:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px #98ff98, 0 0 0 2px #4CAF50;
+
+}
+
+.filterOnP:hover,
+.filterOnP:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px #ca3433, 0 0 0 2px #c21807;
+
+}
+
+.filterOff:hover,
+.filterOff:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px #d9dddc, 0 0 0 2px #DCDCDC;
+
+}
+
+
+
 .buttonMore:hover,
 .buttonMore:focus {
   outline: none;
@@ -108,7 +163,6 @@
   box-shadow: 0 0 0 3px tomato, 0 0 0 4px #800000;
 
 }
-
 
 
 
