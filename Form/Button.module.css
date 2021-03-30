@@ -1,0 +1,114 @@
+.button {
+  font-size: 1rem ;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.4rem;
+  background-color: #4CAF50;
+  color: white;
+  padding: 0.8rem 1.2rem;
+  box-sizing: border-box;
+  transition: 0.1s;
+  min-width: 8rem;
+}
+
+.button:hover,
+.button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px #98ff98, 0 0 0 4px #4CAF50;
+
+}
+.button:disable{
+  opacity: 0.5rem;
+  cursor: wait;
+}
+
+.buttonMore{
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.4rem;
+  background-color: #1E90FF;
+  color: white;
+  box-sizing: border-box;
+  transition: 0.1s;
+}
+
+.buttonMore:hover,
+.buttonMore:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px #4169E1, 0 0 0 2px #1E90FF;
+
+}
+
+.buttonEdit{
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.4rem;
+  background-color: #4CAF50;
+  color: white;
+  box-sizing: border-box;
+  transition: 0.1s;
+}
+
+.buttonEdit:hover,
+.buttonEdit:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px #98ff98, 0 0 0 2px #4CAF50;
+
+}
+
+.buttonDelete{
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.4rem;
+  background-color: #800000	;
+  color: white;
+  box-sizing: border-box;
+  transition: 0.1s;
+}
+
+.buttonDelete:hover,
+.buttonDelete:focus {
+  outline: none;
+  box-shadow: 0 0 0 1px tomato, 0 0 0 2px #800000	;
+
+}
+
+.divider{
+  width:5px;
+  height:auto;
+  display:inline-block;
+}
+
+.dividerVertical{
+  height:3px;
+  display:block;
+}
+
+.buttonCancel{
+  font-size: 1rem ;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.4rem;
+  background-color: #800000;
+  color: white;
+  padding: 0.8rem 1.2rem;
+  box-sizing: border-box;
+  transition: 0.1s;
+  min-width: 8rem;
+}
+
+.buttonCancel:hover,
+.buttonCancel:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px tomato, 0 0 0 4px #800000;
+
+}
+
+
+
+

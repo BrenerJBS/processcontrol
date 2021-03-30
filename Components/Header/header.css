@@ -1,0 +1,43 @@
+.active {
+  color: red;
+}
+
+.logoutButton {
+  font-size: 1rem ;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.4rem;
+  background-color: #1E88E5;
+  color: white;
+  padding: 0.3rem 1.2rem;
+  box-sizing: border-box;
+  transition: 0.1s;
+}
+.logoutButton:hover {
+  outline: none;
+  box-shadow: 0 0 0 3px #1e8fe5, 0 0 0 4px #1e9fe5;
+}
+
+
+header#main-header{
+  background: #272727;
+  height: 72px;
+}
+
+header#main-header .header-content{
+  width: 100%;
+  max-width: 930px;
+  margin: 0 auto;
+  padding: 0 30px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header#main-header .header-content a{
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 23px
+}

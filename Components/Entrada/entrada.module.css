@@ -1,0 +1,158 @@
+.input{
+  display: block;
+  width: 100%;
+  min-width: 200px;
+  border-radius: 0.4rem;
+ 
+  transition: 0.2s;
+ 
+  box-sizing: border-box;
+  text-transform: uppercase;
+}
+.inputP{
+  width: 100%;
+  display: block;
+  min-width: 100px;
+  border-radius: 0.4rem;
+ 
+  transition: 0.2s;
+ 
+  box-sizing: border-box;
+  text-transform: uppercase;
+}
+
+.inputD[type=date] {
+  width: 130px;
+  display: block;
+ 
+  border-radius: 0.4rem;
+ 
+  transition: 0.2s;
+ 
+  box-sizing: border-box;
+  
+}
+
+.upperCase{
+  text-transform: uppercase;
+
+}
+
+.requerente{
+  text-transform: uppercase;
+  width: auto;
+  min-width: 200px;
+}
+
+.assunto{
+  text-transform: uppercase;
+  width: auto;
+  min-width: 200px;
+}
+.auditor{
+  text-transform: uppercase;
+  width: 80px;
+}
+
+.obs{
+  text-transform: uppercase;
+  height: auto;       /* Just for the demo          */
+    
+}
+.data{
+  width: 80px
+}
+
+.inputC[type=checkbox] {
+  transform : scale(1.5); 
+  float:left ;
+  margin-left: 25px;
+ }
+
+ .selectA{
+  display: block;
+  width: 100%;
+  min-width: 100px;
+  border-radius: 0.4rem;
+ 
+  transition: 0.2s;
+ 
+  box-sizing: border-box;
+  text-transform: uppercase;
+}
+
+.selectSimNao{
+  display: block;
+  width: 100%;
+  border-radius: 0.4rem;
+ 
+  transition: 0.2s;
+ 
+  box-sizing: border-box;
+  text-transform: uppercase;
+}
+
+ .select{
+  display: block;
+  width: 100%;
+  min-width: 150px;
+  border-radius: 0.4rem;
+ 
+  transition: 0.2s;
+ 
+  box-sizing: border-box;
+  text-transform: uppercase;
+}
+
+.input:hover,
+.input:focus{
+  outline: none;
+  border-color: #4CAF50;
+  background: white;
+  box-shadow: 0 0 0 3px #98ff98;
+  
+}
+.inputP:hover:enabled,
+.inputP:focus:enabled{
+  outline: none;
+  border-color: #4CAF50;
+  background: white;
+  box-shadow: 0 0 0 3px #98ff98;
+  
+}
+
+.inputD:hover:enabled,
+.inputD:focus:enabled{
+  outline: none;
+  border-color: #4CAF50;
+  background: white;
+  box-shadow: 0 0 0 3px #98ff98;
+  
+}
+
+.inputC[type=checkbox]:hover:enabled,
+.inputC[type=checkbox]:focus:enabled {
+  outline: none;
+  border-color: #4CAF50;
+  background: white;
+  box-shadow: 0 0 0 3px #98ff98;
+  
+}
+
+.select:focus,
+.select:hover{
+  outline: none;
+  border-color: #4CAF50;
+  background: white;
+  box-shadow: 0 0 0 3px #98ff98;
+}
+
+.selectA:focus,
+.selectA:hover{
+  outline: none;
+  border-color: #4CAF50;
+  background: white;
+  box-shadow: 0 0 0 3px #98ff98;
+}
+
+
