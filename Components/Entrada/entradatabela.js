@@ -51,6 +51,7 @@ const EntradaTabela = () => {
     suspensao: false, despacho: false, tipo: false, notificacao: false})
   let filtrosColetados = {auditor: '', recebimento: '', suspensao: '', despacho: '', tipo: '', notificacao: ''}
   const [filtros, setFiltros]  =  React.useState({auditor:''});
+  const [search, setSearch] = React.useState('');
 
 
   React.useEffect(()=> {
@@ -74,6 +75,10 @@ const EntradaTabela = () => {
       setCarregando(false);  
   });
   },[])
+
+  function handleSearch ({target}){
+    setSearch(target.value)      
+  }
 
   function handleMais(key){
     setMore({'more':!more.more,'key':key})    
@@ -279,7 +284,7 @@ const EntradaTabela = () => {
     }
 
     function handleFilter({target}){  
-      if (target.id === 'suspensao' || target.id === 'auditor' || target.id === 'assunto' || target.id === 'tipo'){
+      if (target.id === 'suspensao' || target.id === 'despacho' || target.id === 'auditor' || target.id === 'assunto' || target.id === 'tipo'){
         if (target.value === ''){
           setFiltros({...filtros, [target.id]: ''})
           setFiltro({...filtro, [target.id]: false})
@@ -293,8 +298,17 @@ const EntradaTabela = () => {
       }     
     }
 
+    function searchField(dadosfiltrados){
+        const lowercasedFilter = search.toLowerCase();
+        return (dadosfiltrados.filter(dado => {
+          return (dado.requerente.toLocaleLowerCase().includes(lowercasedFilter) || 
+          dado.obs.toLocaleLowerCase().includes(lowercasedFilter) || 
+          dado.processo === lowercasedFilter || 
+          dado.processo.toLocaleLowerCase().includes(lowercasedFilter))          
+        }))
+    }
 
-  return (
+    return (
      
       <>
       <div style={{ width: '90%', margin: 'auto', marginBottom:'80px', padding: '10px'}}>
@@ -364,7 +378,14 @@ const EntradaTabela = () => {
                 </div> 
               </label>
             </div>               
-              
+            <div style={{display: 'flex', marginLeft:'15px'}}>
+              <label>Busca
+                <div style={{display: 'block'}}>
+                  <input type='text' name='search' id='search' value={search} onChange={handleSearch} />                    
+                  
+                </div> 
+              </label>
+            </div>            
             
           </div>        
         </div>
@@ -374,7 +395,7 @@ const EntradaTabela = () => {
         <tbody>
           {carregando ? <p style={{marginLeft:'10px'}}>Carregando... Aguarde</p> : 
           <>         
-          {multiPropsFilter(dados,filtrosSelecionados(filtro, filtrosColetados, filtros)).map((dado) => {
+          {searchField(multiPropsFilter(dados,filtrosSelecionados(filtro, filtrosColetados, filtros))).map((dado) => {
             return (                          
               <tr key={dado.key}>                           
                 <td>
