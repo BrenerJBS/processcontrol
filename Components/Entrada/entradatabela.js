@@ -48,9 +48,9 @@ const EntradaTabela = () => {
   const [carregando, setCarregando] = React.useState(true);
 
   const [filtro,setFiltro] = React.useState({auditor: false, recebimento: false, 
-    suspensao: false, despacho: false, tipo: false, notificacao: false})
-  let filtrosColetados = {auditor: '', recebimento: '', suspensao: '', despacho: '', tipo: '', notificacao: ''}
-  const [filtros, setFiltros]  =  React.useState({auditor:''});
+    suspensao: false, despacho: false, tipo: false, notificacao: false, exclusao: false})
+  let filtrosColetados = {exclusao: '', auditor: '', recebimento: '', suspensao: '', despacho: '', tipo: '', notificacao: ''}
+  const [filtros, setFiltros]  =  React.useState({auditor:'', exclusao: ''});
   const [search, setSearch] = React.useState('');
 
 
@@ -82,6 +82,10 @@ const EntradaTabela = () => {
 
   function handleMais(key){
     setMore({'more':!more.more,'key':key})    
+  }
+
+  function handleExcluir(key){
+    atualizarFB(key, true, 'exclusao')
   }
   
   function handleEditar(key){  
@@ -141,6 +145,7 @@ const EntradaTabela = () => {
       auditorkey: window.localStorage.getItem('token'),
       tipo: processos,  
       disabled: true,
+      exclusao: false,
       key: newEntradaKey,   
       history: getCurrentDate()  
     };
@@ -168,6 +173,7 @@ const EntradaTabela = () => {
       auditorkey: window.localStorage.getItem('token'),
       tipo: processos,  
       disabled: true,
+      exclusao: false,
       key: editkey,   
       history: getCurrentDate()  
     };
@@ -187,6 +193,7 @@ const EntradaTabela = () => {
       auditorkey: window.localStorage.getItem('token'),
       tipo: processos,  
       disabled: true,
+      exclusao: false,
       key: editkey,   
       history: getCurrentDate()  
     };
@@ -208,6 +215,7 @@ const EntradaTabela = () => {
           auditorkey: task.auditorkey,
           tipo: task.tipo,  
           disabled: true,
+          exclusao: false,
           key: task.key    
         };        
       }
@@ -320,6 +328,7 @@ const EntradaTabela = () => {
             <button id='prioridade' value={!filtro.prioridade} className={filtro.prioridade ? stylesB.filterOnP : stylesB.filterOff} onClick={handleFilter}>Prioridade</button>
             <button id='recebimento' value={filtro.recebimento} className={filtro.recebimento ? stylesB.filterOn : stylesB.filterOff} onClick={handleFilter}>Não Recebidos</button>
             <button id='notificacao' value={!filtro.notificacao} className={filtro.notificacao ? stylesB.filterOn : stylesB.filterOff} onClick={handleFilter}>Notificado</button>
+            <button id='exclusao' value={!filtro.exclusao} className={filtro.exclusao ? stylesB.filterOnP : stylesB.filterOff} onClick={handleFilter}>Excluídos</button>
             
           </div>
         </div>
@@ -396,7 +405,8 @@ const EntradaTabela = () => {
           {carregando ? <p style={{marginLeft:'10px'}}>Carregando... Aguarde</p> : 
           <>         
           {searchField(multiPropsFilter(dados,filtrosSelecionados(filtro, filtrosColetados, filtros))).map((dado) => {
-            return (                          
+            return (   
+              (!dado.exclusao || filtro.exclusao) &&               
               <tr key={dado.key}>                           
                 <td>
                   {dado.tipo === 'oficio' ? <>OF. {dado.processo}</> : dado.processo} 
@@ -472,12 +482,12 @@ const EntradaTabela = () => {
                   <p style={{textTransform:'lowercase', color:'red'}}> ... </p>  }
                 </td>        
                 <td>
-                  {edit ? 
+                  {(edit || dado.exclusao)  ? 
                   <button className={stylesB.buttonMore} onClick={(e) => handleMais(dado.key)}>Mais...</button> : 
                   <>
                   <button className={stylesB.buttonEdit} onClick={(e) => handleEditar(dado.key)}>Editar</button>
                   <div className={stylesB.dividerVertical}/>
-                  <button className={stylesB.buttonDelete}>Excluir</button>                
+                  <button className={stylesB.buttonDelete} onClick={(e) => handleExcluir(dado.key)}>Excluir</button>                
                   <div className={stylesB.dividerVertical}/>
                   <button className={stylesB.buttonMore} onClick={(e) => handleMais(dado.key)}>Mais...</button>
                   </>
