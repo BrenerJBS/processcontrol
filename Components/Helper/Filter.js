@@ -17,9 +17,9 @@ export function filtrosSelecionados(filter,filterColetados,filters ){
  
   filterKeys.map(ind => {        
     if (filter[ind] === true){
-      filterColetados = {...filterColetados, [ind]: filters[ind]}        
+      return filterColetados = {...filterColetados, [ind]: filters[ind]}        
     }else{
-      filterColetados = {...filterColetados, [ind]: ''}        
+      return filterColetados = {...filterColetados, [ind]: ''}        
     }
   })
   return filterColetados;

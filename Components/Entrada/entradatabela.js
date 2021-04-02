@@ -15,6 +15,7 @@ import { filtrosSelecionados } from '../Helper/Filter';
 
 import stylesE from '../Entrada/entrada.module.css'
 import stylesB from '../../Form/Button.module.css'
+import stylesC from '../Components.module.css'
 import {getCurrentDate} from '../Helper/DateCurrent'
 import { nomeAuditor } from '../Helper/Auditor';
 import { nomeAssunto } from '../Helper/Assunto';
@@ -399,7 +400,7 @@ const EntradaTabela = () => {
           </div>        
         </div>
       </div>
-      <table class="containerExcel">
+      <table className="containerExcel">
         <Entradathead />
         <tbody>
           {carregando ? <p style={{marginLeft:'10px'}}>Carregando... Aguarde</p> : 
@@ -407,7 +408,7 @@ const EntradaTabela = () => {
           {searchField(multiPropsFilter(dados,filtrosSelecionados(filtro, filtrosColetados, filtros))).map((dado) => {
             return (   
               (!dado.exclusao || filtro.exclusao) &&               
-              <tr key={dado.key}>                           
+              <tr key={dado.key} className={(dado.prioridade && !dado.recebimento) && stylesC.prioridade}>                           
                 <td>
                   {dado.tipo === 'oficio' ? <>OF. {dado.processo}</> : dado.processo} 
                   {(more.more && more.key===dado.key)  && 
