@@ -62,14 +62,16 @@ const HistoryData = () => {
                 {auditores && nomeAuditor(dado.auditor, auditores)}
                </td>
                <td>
-                <input  type="checkbox" id='prioridade' 
-                  name='prioridade'  checked={dado.prioridade} 
-                   disabled />
+               {(dado.prioridade !== '') && <input  type="checkbox" id='prioridade' 
+                  name='prioridade' checked={dado.prioridade} 
+                   disabled />}
+                
                </td>
                <td>
+                 {(dado.notificacao !== '') &&
                 <input  type="checkbox" id='notificacao' 
                   name='notificacao'  checked={dado.notificacao} 
-                  disabled />
+                  disabled /> }
                </td>
                <td>
                 {dado.obs} 

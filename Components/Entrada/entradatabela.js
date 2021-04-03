@@ -92,8 +92,11 @@ const EntradaTabela = () => {
   function handleEditar(key){  
     refInput.current.focus();
     setEdit(true);
-   dados.forEach(task => {
-      if (key === task.key) {
+    let task = null
+    const dataRef = database.ref('entrada/'+key);
+    dataRef.on('value', (snapshot) => {
+      return task = snapshot.val()
+  });
         processo.setValue(task.processo)
         setProcessos(task.tipo);
         setDataEntrada(task.data);
@@ -107,13 +110,6 @@ const EntradaTabela = () => {
         setSuspensao(task.suspensao)
         setDespacho(task.despacho)        
         setEditkey(task.key)
-      }     
-    });   
-  }
-
-  function atualizarFB(key, value, name){
-    const editRef = database.ref('entrada');
-    editRef.child(key).update({[name]: value})
   }
 
   function handleChange(key, value, name ){  
@@ -128,6 +124,11 @@ const EntradaTabela = () => {
       setDados(editedRequerente);
     } 
   }  
+
+  function atualizarFB(key, value, name){
+    const editRef = database.ref('entrada');
+    editRef.child(key).update({[name]: value})
+  }
 
   function writeNewEntrada() {  
     var newEntradaKey = database.ref().child('entrada').push().key;
@@ -158,7 +159,7 @@ const EntradaTabela = () => {
     return database.ref().update(updates);
   }
 
-  function updateEntrada() {    
+  function updateEntrada() { 
     var entradaData = {
       processo: processo.value,
       data: dataEntrada,
@@ -179,48 +180,20 @@ const EntradaTabela = () => {
       history: getCurrentDate()  
     };
 
-    var historyData = {
-      processo: processo.value,
-      data: dataEntrada,
-      requerente: requerente,
-      assunto: assunto,
-      auditor: auditor,
-      prioridade: prioridade,
-      notificacao: notificacao,
-      obs: obs,
-      recebimento: recebimento,
-      suspensao: suspensao,
-      despacho: despacho,
-      auditorkey: window.localStorage.getItem('token'),
-      tipo: processos,  
-      disabled: true,
-      exclusao: false,
-      key: editkey,   
-      history: getCurrentDate()  
-    };
-    
-    dados.forEach(task => {
-      if (editkey === task.key) {
-        historyData = {
-          processo: task.processo,
-          data: task.data,
-          requerente: task.requerente,
-          assunto: task.assunto,
-          auditor: task.auditor,
-          prioridade: task.prioridade,
-          notificacao: task.notificacao,
-          obs: task.obs,
-          recebimento: task.recebimento,
-          suspensao: task.suspensao,
-          despacho: task.despacho,
-          auditorkey: task.auditorkey,
-          tipo: task.tipo,  
-          disabled: true,
-          exclusao: false,
-          key: task.key    
-        };        
-      }
-    });
+    let historyData = null
+  
+    const dataRef = database.ref('entrada/'+editkey);
+    dataRef.on('value', (snapshot) => {
+      historyData = snapshot.val();
+  });
+    const datakeys = Object.keys(historyData);
+
+    datakeys.forEach(key => { return (
+      (historyData[key] === entradaData[key]) && (historyData[key] = '')
+    )})
+    //console.log(historyData)
+    historyData.auditorkey = entradaData.auditorkey
+
     // Write the new post's data simultaneously in the posts list and the user's post list.
     var updates = {};
     updates['/entrada/' + editkey] = entradaData;  
@@ -290,32 +263,32 @@ const EntradaTabela = () => {
       setSuspensao('')
       setDespacho('')  
     }
-    }
+  }
 
-    function handleFilter({target}){  
-      if (target.id === 'suspensao' || target.id === 'despacho' || target.id === 'auditor' || target.id === 'assunto' || target.id === 'tipo'){
-        if (target.value === ''){
-          setFiltros({...filtros, [target.id]: ''})
-          setFiltro({...filtro, [target.id]: false})
-        }else{
-          setFiltros({...filtros, [target.id]: target.value})
-          setFiltro({...filtro, [target.id]: true})
-        }
-      } else{
+  function handleFilter({target}){  
+    if (target.id === 'suspensao' || target.id === 'despacho' || target.id === 'auditor' || target.id === 'assunto' || target.id === 'tipo'){
+      if (target.value === ''){
+        setFiltros({...filtros, [target.id]: ''})
+        setFiltro({...filtro, [target.id]: false})
+      }else{
         setFiltros({...filtros, [target.id]: target.value})
-        setFiltro(prevFiltro => ({...filtro, [target.id]: !prevFiltro[target.id]}))
-      }     
-    }
+        setFiltro({...filtro, [target.id]: true})
+      }
+    } else{
+      setFiltros({...filtros, [target.id]: target.value})
+      setFiltro(prevFiltro => ({...filtro, [target.id]: !prevFiltro[target.id]}))
+    }     
+  }
 
-    function searchField(dadosfiltrados){
-        const lowercasedFilter = search.toLowerCase();
-        return (dadosfiltrados.filter(dado => {
-          return (dado.requerente.toLocaleLowerCase().includes(lowercasedFilter) || 
-          dado.obs.toLocaleLowerCase().includes(lowercasedFilter) || 
-          dado.processo === lowercasedFilter || 
-          dado.processo.toLocaleLowerCase().includes(lowercasedFilter))          
-        }))
-    }
+  function searchField(dadosfiltrados){
+      const lowercasedFilter = search.toLowerCase();
+      return (dadosfiltrados.filter(dado => {
+        return (dado.requerente.toLocaleLowerCase().includes(lowercasedFilter) || 
+        dado.obs.toLocaleLowerCase().includes(lowercasedFilter) || 
+        dado.processo === lowercasedFilter || 
+        dado.processo.toLocaleLowerCase().includes(lowercasedFilter))          
+      }))
+  }
 
     return (
      
