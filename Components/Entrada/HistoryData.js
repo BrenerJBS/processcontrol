@@ -5,6 +5,10 @@ import { snapshotToArray } from '../Helper/SnaptoArray';
 import { database } from '../../utils/firebaseUtils';
 import { nomeAuditor } from '../Helper/Auditor';
 import { nomeAssunto } from '../Helper/Assunto';
+import {getCurrentDate} from '../Helper/DateCurrent'
+import {carregarBDval} from '../../utils/FirebaseData'
+
+import stylesB from '../../Form/Button.module.css'
 
 
 const HistoryData = () => {
@@ -16,7 +20,8 @@ const HistoryData = () => {
   const [carregando, setCarregando] = React.useState(true)
 
   React.useEffect(()=> {
-    const auditoresRef = database.ref('lista_auditores');
+    const lista = 'lista_auditores'
+    const auditoresRef = database.ref(lista);
     auditoresRef.once('value', (snapshot) => {
       setAuditores(snapshotToArray(snapshot));            
   });
@@ -25,18 +30,41 @@ const HistoryData = () => {
   React.useEffect(()=> {
     const assuntoRef = database.ref('lista_assuntos');
     assuntoRef.once('value', (snapshot) => {
-      setAssuntos(snapshotToArray(snapshot));        
-    
-  });
+      setAssuntos(snapshotToArray(snapshot));       
+  });  
   },[])
 
   React.useEffect(()=> {
     const dataRef = database.ref('history/entrada/'+params.keyline);
     dataRef.on('value', (snapshot) => {
       setDados(snapshotToArray(snapshot)); 
+      
       setCarregando(false);  
   });
+    
   },[params])
+
+ 
+
+  function handleRecuperar(dadoRecuperado){
+    let newData = carregarBDval('entrada/'+params.keyline)
+    let historyData = newData
+
+    const datakeys = Object.keys(newData);     
+      datakeys.forEach(key => {
+        if (dadoRecuperado[key] !== undefined && key !== 'key'){
+          return ((historyData[key] !== dadoRecuperado[key]) && (newData[key] =  dadoRecuperado[key]))
+        }          
+      })
+      newData.history = getCurrentDate()
+      newData.auditorkey = window.localStorage.getItem('token')  
+      // Write the new post's data simultaneously in the posts list and the user's post list.
+      var updates = {};
+      updates['/entrada/' + params.keyline] = newData;  
+      updates['/history/entrada/' + params.keyline + '/' + getCurrentDate()] = historyData;    
+      return database.ref().update(updates);    
+  }
+ 
 
   return (
     <div className="animeLeft">
@@ -50,31 +78,30 @@ const HistoryData = () => {
                   {dado.tipo === 'oficio' ? <>OF. {dado.processo}</> : dado.processo} 
                </td>
                <td>
-                  {dado.data} 
+                  {dado.data !== undefined && dado.data} 
                </td>
                <td>
-                  {dado.requerente} 
+                  {dado.requerente !== undefined && dado.requerente} 
                </td>
                <td>
-                {assuntos && nomeAssunto(dado.assunto, assuntos)}
+                {assuntos && dado.assunto && nomeAssunto(dado.assunto, assuntos)}
                </td>
                <td>
-                {auditores && nomeAuditor(dado.auditor, auditores)}
+                {auditores && dado.auditor && nomeAuditor(dado.auditor, auditores)}
                </td>
                <td>
-               {(dado.prioridade !== '') && <input  type="checkbox" id='prioridade' 
+               {dado.prioridade !== undefined && <input  type="checkbox" id='prioridade' 
                   name='prioridade' checked={dado.prioridade} 
                    disabled />}
-                
                </td>
                <td>
-                 {(dado.notificacao !== '') &&
+                 {dado.notificacao !== undefined &&
                 <input  type="checkbox" id='notificacao' 
                   name='notificacao'  checked={dado.notificacao} 
                   disabled /> }
                </td>
                <td>
-                {dado.obs} 
+                {dado.obs !== undefined && dado.obs} 
                </td>
                <td>
                 {dado.key} 
@@ -82,16 +109,12 @@ const HistoryData = () => {
                <td>
                 {auditores && nomeAuditor(dado.auditorkey, auditores)}
                </td>
-               <td>
-                 
-               </td>
-              
-             </tr>  )}                               
+                <td>
+                <button className={stylesB.buttonEdit} onClick={(e) => handleRecuperar(dado)}>Recuperar</button>
+                </td>             
+               </tr>  )}                               
           </tbody>
         </table>
-        
-
-      
       }
     </div>
   )

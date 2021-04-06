@@ -1,26 +1,29 @@
 import React from 'react'
-import '../../animation.css';
-import '../../excel.css';
 import Checkbox from '../../Form/Checkbox';
 import Input from '../../Form/Input';
 import Select from '../../Form/Select';
 import useForm from '../../Hooks/useForm';
-import styles from '../../Form/Input.module.css' 
 import Button from '../../Form/Button';
 import { database } from '../../utils/firebaseUtils';
 import { snapshotToArray } from '../Helper/SnaptoArray';
 import { multiPropsFilter } from '../Helper/Filter';
 import { filtrosSelecionados } from '../Helper/Filter';
-
-
-import stylesE from '../Entrada/entrada.module.css'
-import stylesB from '../../Form/Button.module.css'
-import stylesC from '../Components.module.css'
+import {carregarBDval} from '../../utils/FirebaseData'
 import {getCurrentDate} from '../Helper/DateCurrent'
 import { nomeAuditor } from '../Helper/Auditor';
 import { nomeAssunto } from '../Helper/Assunto';
 import Entradathead from './Entradathead';
 import { Link } from 'react-router-dom';
+
+import '../../animation.css';
+import '../../excel.css';
+import stylesE from '../Entrada/entrada.module.css'
+import stylesB from '../../Form/Button.module.css'
+import stylesC from '../Components.module.css'
+import styles from '../../Form/Input.module.css' 
+
+
+
 
 
 const EntradaTabela = () => {
@@ -93,10 +96,8 @@ const EntradaTabela = () => {
     refInput.current.focus();
     setEdit(true);
     let task = null
-    const dataRef = database.ref('entrada/'+key);
-    dataRef.on('value', (snapshot) => {
-      return task = snapshot.val()
-  });
+    task = carregarBDval('entrada/'+key)
+
         processo.setValue(task.processo)
         setProcessos(task.tipo);
         setDataEntrada(task.data);
@@ -180,16 +181,12 @@ const EntradaTabela = () => {
       history: getCurrentDate()  
     };
 
-    let historyData = null
-  
-    const dataRef = database.ref('entrada/'+editkey);
-    dataRef.on('value', (snapshot) => {
-      historyData = snapshot.val();
-  });
+    let historyData = carregarBDval('entrada/'+editkey)
+ 
     const datakeys = Object.keys(historyData);
 
     datakeys.forEach(key => { return (
-      (historyData[key] === entradaData[key]) && (historyData[key] = '')
+      (historyData[key] === entradaData[key]) && (historyData[key] = null)
     )})
     //console.log(historyData)
     historyData.auditorkey = entradaData.auditorkey
