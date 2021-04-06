@@ -80,6 +80,11 @@ const EntradaTabela = () => {
   });
   },[])
 
+
+  function handleRecuperar(key){
+    atualizarFB(key, false, 'exclusao')
+  }
+
   function handleSearch ({target}){
     setSearch(target.value)      
   }
@@ -453,15 +458,22 @@ const EntradaTabela = () => {
                   <p style={{textTransform:'lowercase', color:'red'}}> ... </p>  }
                 </td>        
                 <td>
-                  {(edit || dado.exclusao)  ? 
-                  <button className={stylesB.buttonMore} onClick={(e) => handleMais(dado.key)}>Mais...</button> : 
-                  <>
-                  <button className={stylesB.buttonEdit} onClick={(e) => handleEditar(dado.key)}>Editar</button>
-                  <div className={stylesB.dividerVertical}/>
-                  <button className={stylesB.buttonDelete} onClick={(e) => handleExcluir(dado.key)}>Excluir</button>                
-                  <div className={stylesB.dividerVertical}/>
+                  {(edit )  ? 
                   <button className={stylesB.buttonMore} onClick={(e) => handleMais(dado.key)}>Mais...</button>
-                  </>
+                   : dado.exclusao ?
+                     <>
+                    <button className={stylesB.buttonEdit} onClick={(e) => handleRecuperar(dado.key)}>Recuperar</button>
+                    <div className={stylesB.dividerVertical}/>
+                    <button className={stylesB.buttonMore} onClick={(e) => handleMais(dado.key)}>Mais...</button>
+                    </>
+                    :
+                    <>
+                    <button className={stylesB.buttonEdit} onClick={(e) => handleEditar(dado.key)}>Editar</button>
+                    <div className={stylesB.dividerVertical}/>
+                    <button className={stylesB.buttonDelete} onClick={(e) => handleExcluir(dado.key)}>Excluir</button>                
+                    <div className={stylesB.dividerVertical}/>
+                    <button className={stylesB.buttonMore} onClick={(e) => handleMais(dado.key)}>Mais...</button>
+                    </>
                   }                
                 </td>          
               </tr>
