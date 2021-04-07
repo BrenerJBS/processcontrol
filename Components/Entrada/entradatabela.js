@@ -3,7 +3,7 @@ import Checkbox from '../../Form/Checkbox';
 import Input from '../../Form/Input';
 import Select from '../../Form/Select';
 import useForm from '../../Hooks/useForm';
-import Button from '../../Form/Button';
+import ButtonForm from '../../Form/Button';
 import { database } from '../../utils/firebaseUtils';
 import { snapshotToArray } from '../Helper/SnaptoArray';
 import { multiPropsFilter } from '../Helper/Filter';
@@ -14,6 +14,7 @@ import { nomeAuditor } from '../Helper/Auditor';
 import { nomeAssunto } from '../Helper/Assunto';
 import Entradathead from './Entradathead';
 import { Link } from 'react-router-dom';
+import { Button,Modal } from 'react-bootstrap'
 
 import '../../animation.css';
 import '../../excel.css';
@@ -21,6 +22,8 @@ import stylesE from '../Entrada/entrada.module.css'
 import stylesB from '../../Form/Button.module.css'
 import stylesC from '../Components.module.css'
 import styles from '../../Form/Input.module.css' 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 
 
@@ -89,9 +92,9 @@ const EntradaTabela = () => {
     setSearch(target.value)      
   }
 
-  function handleMais(key){
-    setMore({'more':!more.more,'key':key})    
-  }
+ /* function handleMais(key){
+    
+  }*/
 
   function handleExcluir(key){
     atualizarFB(key, true, 'exclusao')
@@ -291,10 +294,44 @@ const EntradaTabela = () => {
         dado.processo.toLocaleLowerCase().includes(lowercasedFilter))          
       }))
   }
-
+  
+   
+    const [show, setShow] = React.useState(false);
+    const [mod, setMod] = React.useState(null)
+  
+    const handleClose = () => setShow(false);
+    function handleShow (dado) {
+      //setMore({'more':!more.more,'key':dado.key})
+      setShow(true)    
+      setMod(dado)
+    }
+   
     return (
      
       <>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Mais Informações</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {mod && <><p style={{textTransform:'lowercase', color:'red'}}>alterado por {nomeAuditor(mod.auditorkey, auditores)}</p>
+        <p style={{textTransform:'lowercase', color:'red'}}>ultima alteração em { mod.history }</p>
+        
+        </>
+        }
+                  
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Fechar
+          </Button>
+          <Button variant="primary" onClick={handleClose}>
+          {mod && <Link style={{color: 'white' }}to={"HistoryData/"+mod.key}>Mais informações</Link>}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      
       <div style={{ width: '90%', margin: 'auto', marginBottom:'80px', padding: '10px'}}>
         <div style={{width: '25%',float: 'left'}}>FILTROS MAIS UTILIZADOS
           <div>
@@ -386,54 +423,46 @@ const EntradaTabela = () => {
               <tr key={dado.key} className={(dado.prioridade && !dado.recebimento) && stylesC.prioridade}>                           
                 <td>
                   {dado.tipo === 'oficio' ? <>OF. {dado.processo}</> : dado.processo} 
-                  {(more.more && more.key===dado.key)  && 
-                  <p style={{textTransform:'lowercase', color:'red'}}>alterado por </p>}
+                  
                 </td>
                 <td className={stylesE.data}>
                   {dado.data} 
-                  {(more.more && more.key===dado.key)  && 
-                  <p style={{color:'red'}}>{nomeAuditor(dado.auditorkey, auditores)}</p>}
+                 
                 </td>
                 <td className={stylesE.requerente}>
                   {dado.requerente} 
-                  {(more.more && more.key===dado.key)  && 
-                  <p style={{textTransform:'lowercase', color:'red'}}>ultima alteração em </p>  }
+                  
                 </td> 
                 <td className={stylesE.assunto}>
                   {assuntos && nomeAssunto(dado.assunto, assuntos)}
-                  {(more.more && more.key===dado.key)  && 
-                  <p style={{textTransform:'lowercase', color:'red'}}> { dado.history }</p>  }
+                 
                 </td>
                 <td className={stylesE.auditor}>
                   {auditores && nomeAuditor(dado.auditor, auditores)}
-                  {(more.more && more.key===dado.key)  && 
-                  <p style={{textTransform:'lowercase', color:'red'}}> <Link to={"HistoryData/"+dado.key}>Mais informações</Link> </p>  }
+                
                 </td>
                 <td >
                   <input className={stylesE.inputC} type="checkbox" id='prioridade' 
                   name='prioridade'  checked={dado.prioridade} 
                   onChange={(e) => handleChange(dado.key,e.target.checked, e.target.name)} disabled />
-                  {(more.more && more.key===dado.key)  && 
-                  <p style={{textTransform:'lowercase', color:'red'}}> ... </p>  }
+                 
                 </td>
                 <td>
                   <input className={stylesE.inputC} type="checkbox" id='notificacao' 
                   name='notificacao'  checked={dado.notificacao} 
                   onChange={(e) => handleChange(dado.key,e.target.checked, e.target.name)} disabled />
-                  {(more.more && more.key===dado.key)  && 
-                  <p style={{textTransform:'lowercase', color:'red'}}> ... </p>  }
+                
                 </td>
                 <td className={stylesE.obs}>
                   {dado.obs} 
-                  {(more.more && more.key===dado.key)  && 
-                  <p style={{textTransform:'lowercase', color:'red'}}> ... </p>  }
+                 
+                 
                 </td>
                 <td>
                   <input className={stylesE.inputC} type="checkbox" id='recebimento' 
                   name='recebimento'  checked={dado.recebimento} 
                   onChange={(e) => handleChange(dado.key,e.target.checked, e.target.name)} disabled={edit} />
-                  {(more.more && more.key===dado.key)  && 
-                  <p style={{textTransform:'lowercase', color:'red'}}> ... </p>  }
+                 
                 </td>
                 <td>
                   <select className={stylesE.selectSimNao} id='suspensao' name='suspensao' 
@@ -443,8 +472,7 @@ const EntradaTabela = () => {
                     <option key='0' value='NÃO'>NÃO</option>
                     <option key='1' value='SIM'>SIM</option>
                   </select>   
-                  {(more.more && more.key===dado.key)  && 
-                  <p style={{textTransform:'lowercase', color:'red'}}> ... </p>  }
+                 
                 </td>
                 <td>
                   <select className={stylesE.selectSimNao} id='despacho' name='despacho' 
@@ -454,17 +482,16 @@ const EntradaTabela = () => {
                     <option key='0' value='NÃO'>NÃO</option>
                     <option key='1' value='SIM'>SIM</option>
                   </select>
-                  {(more.more && more.key===dado.key)  && 
-                  <p style={{textTransform:'lowercase', color:'red'}}> ... </p>  }
+                 
                 </td>        
                 <td>
                   {(edit )  ? 
-                  <button className={stylesB.buttonMore} onClick={(e) => handleMais(dado.key)}>Mais...</button>
+                  <button className={stylesB.buttonMore} onClick={(e) => handleShow(dado)}>Mais...</button>
                    : dado.exclusao ?
                      <>
                     <button className={stylesB.buttonEdit} onClick={(e) => handleRecuperar(dado.key)}>Recuperar</button>
                     <div className={stylesB.dividerVertical}/>
-                    <button className={stylesB.buttonMore} onClick={(e) => handleMais(dado.key)}>Mais...</button>
+                    <button className={stylesB.buttonMore} onClick={(e) => handleShow(dado)}>Mais...</button>
                     </>
                     :
                     <>
@@ -472,7 +499,7 @@ const EntradaTabela = () => {
                     <div className={stylesB.dividerVertical}/>
                     <button className={stylesB.buttonDelete} onClick={(e) => handleExcluir(dado.key)}>Excluir</button>                
                     <div className={stylesB.dividerVertical}/>
-                    <button className={stylesB.buttonMore} onClick={(e) => handleMais(dado.key)}>Mais...</button>
+                    <button className={stylesB.buttonMore} onClick={(e) => handleShow(dado)}>Mais...</button>
                     </>
                   }                
                 </td>          
@@ -549,7 +576,7 @@ const EntradaTabela = () => {
             <div style={{float:'right', paddingTop: '1.2rem'}}> 
               <button className={stylesB.buttonCancel} onClick={handleSubmitCancelar}>Cancelar</button>
             <div className={stylesB.divider}/>
-            <button className={stylesB.button} onClick={handleSubmitEditar}>Editar</button></div>: <div style={{float:'right', paddingTop: '1.2rem'}}><Button type='submit'>Enviar</Button> </div>}
+            <button className={stylesB.button} onClick={handleSubmitEditar}>Editar</button></div>: <div style={{float:'right', paddingTop: '1.2rem'}}><ButtonForm type='submit'>Enviar</ButtonForm> </div>}
       </div>
       </form>
     </div>
