@@ -1,9 +1,6 @@
 import React from 'react'
-import Checkbox from '../../Form/Checkbox';
-import Input from '../../Form/Input';
-import Select from '../../Form/Select';
+
 import useForm from '../../Hooks/useForm';
-import ButtonForm from '../../Form/Button';
 import { database } from '../../utils/firebaseUtils';
 import { snapshotToArray } from '../Helper/SnaptoArray';
 import { multiPropsFilter } from '../Helper/Filter';
@@ -12,22 +9,21 @@ import {carregarBDval} from '../../utils/FirebaseData'
 import {getCurrentDate} from '../Helper/DateCurrent'
 import { nomeAuditor } from '../Helper/Auditor';
 import { nomeAssunto } from '../Helper/Assunto';
+import {searchField} from '../Helper/SearchField';
+
 import Entradathead from './Entradathead';
-import { Link } from 'react-router-dom';
-import { Button,Modal } from 'react-bootstrap'
+import ModalEntrada from './ModalEntrada'
 
 import '../../animation.css';
 import '../../excel.css';
 import stylesE from '../Entrada/entrada.module.css'
 import stylesB from '../../Form/Button.module.css'
 import stylesC from '../Components.module.css'
-import styles from '../../Form/Input.module.css' 
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-
-
-
-
+import Filtrosmais from './Filtrosmais';
+import FiltroSelecao from './FiltroSelecao';
+import Acao from './Acao';
+import FormEntrada from './FormEntrada';
 
 const EntradaTabela = () => {
   const processo = useForm('processo');
@@ -46,7 +42,6 @@ const EntradaTabela = () => {
   const [despacho, setDespacho] = React.useState('');
 
   const [dados, setDados] = React.useState(null);  
-  const [more, setMore] = React.useState({ more: false, key: '' });
 
   const refInput = React.useRef(null);
   const [edit, setEdit] = React.useState(false);
@@ -59,30 +54,40 @@ const EntradaTabela = () => {
   let filtrosColetados = {exclusao: '', auditor: '', recebimento: '', suspensao: '', despacho: '', tipo: '', notificacao: ''}
   const [filtros, setFiltros]  =  React.useState({auditor:'', exclusao: ''});
   const [search, setSearch] = React.useState('');
+  const [error, setError] = React.useState(null);
+  const [loadingbutton, setLoadingbutton] = React.useState(false);
+  const [show, setShow] = React.useState(false);
+  const [mod, setMod] = React.useState(null)
 
-
+  
   React.useEffect(()=> {
-    const auditoresRef = database.ref('lista_auditores');
-    auditoresRef.once('value', (snapshot) => {
+      const auditoresRef = database.ref('lista_auditores');
+      auditoresRef.once('value', (snapshot) => {
       setAuditores(snapshotToArray(snapshot));            
-  });
+    });    
   },[])
 
   React.useEffect(()=> {
     const assuntoRef = database.ref('lista_assuntos');
     assuntoRef.once('value', (snapshot) => {
-      setAssuntos(snapshotToArray(snapshot));  
-  });
+    setAssuntos(snapshotToArray(snapshot));  
+  }); 
   },[])
 
   React.useEffect(()=> {
-    const dataRef = database.ref('entrada');
-    dataRef.on('value', (snapshot) => {
+      const dataRef = database.ref('entrada');
+      dataRef.on('value', (snapshot) => {
       setDados(snapshotToArray(snapshot)); 
       setCarregando(false);  
   });
   },[])
 
+  const handleClose = () => setShow(false);
+  function handleShow (dado) {
+    //setMore({'more':!more.more,'key':dado.key})
+    setShow(true)    
+    setMod(dado)
+  }
 
   function handleRecuperar(key){
     atualizarFB(key, false, 'exclusao')
@@ -92,33 +97,35 @@ const EntradaTabela = () => {
     setSearch(target.value)      
   }
 
- /* function handleMais(key){
-    
-  }*/
-
   function handleExcluir(key){
     atualizarFB(key, true, 'exclusao')
   }
   
-  function handleEditar(key){  
-    refInput.current.focus();
-    setEdit(true);
-    let task = null
-    task = carregarBDval('entrada/'+key)
-
-        processo.setValue(task.processo)
-        setProcessos(task.tipo);
-        setDataEntrada(task.data);
-        setRequerente(task.requerente);
-        setAssunto(task.assunto);
-        setAuditor(task.auditor);
-        setPrioridade(task.prioridade);
-        setNotificacao(task.notificacao);
-        setObs(task.obs);
-        setRecebimento(task.recebimento)        
-        setSuspensao(task.suspensao)
-        setDespacho(task.despacho)        
-        setEditkey(task.key)
+  async function handleEditar(key){  
+    try {
+      refInput.current.focus();
+      setEdit(true);
+      let task = null
+      task = await carregarBDval('entrada/'+key)
+          processo.setValue(task.processo)
+          setProcessos(task.tipo);
+          setDataEntrada(task.data);
+          setRequerente(task.requerente);
+          setAssunto(task.assunto);
+          setAuditor(task.auditor);
+          setPrioridade(task.prioridade);
+          setNotificacao(task.notificacao);
+          setObs(task.obs);
+          setRecebimento(task.recebimento)        
+          setSuspensao(task.suspensao)
+          setDespacho(task.despacho)        
+          setEditkey(task.key)
+    }
+    catch (error){
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      setError(errorCode + " - " + errorMessage)
+    }
   }
 
   function handleChange(key, value, name ){  
@@ -133,79 +140,6 @@ const EntradaTabela = () => {
       setDados(editedRequerente);
     } 
   }  
-
-  function atualizarFB(key, value, name){
-    const editRef = database.ref('entrada');
-    editRef.child(key).update({[name]: value})
-  }
-
-  function writeNewEntrada() {  
-    var newEntradaKey = database.ref().child('entrada').push().key;
-    var entradaData = {
-      processo: processo.value,
-      data: dataEntrada,
-      requerente: requerente,
-      assunto: assunto,
-      auditor: auditor,
-      prioridade: prioridade,
-      notificacao: notificacao,
-      obs: obs,
-      recebimento: recebimento,
-      suspensao: suspensao,
-      despacho: despacho,
-      auditorkey: window.localStorage.getItem('token'),
-      tipo: processos,  
-      disabled: true,
-      exclusao: false,
-      key: newEntradaKey,   
-      history: getCurrentDate()  
-    };
-  
-    // Write the new post's data simultaneously in the posts list and the user's post list.
-    var updates = {};
-    updates['/entrada/' + newEntradaKey] = entradaData;  
-    //updates['/history/entrada/' + newEntradaKey + '/' + entradaData.history] = entradaData;  
-    return database.ref().update(updates);
-  }
-
-  function updateEntrada() { 
-    var entradaData = {
-      processo: processo.value,
-      data: dataEntrada,
-      requerente: requerente,
-      assunto: assunto,
-      auditor: auditor,
-      prioridade: prioridade,
-      notificacao: notificacao,
-      obs: obs,
-      recebimento: recebimento,
-      suspensao: suspensao,
-      despacho: despacho,
-      auditorkey: window.localStorage.getItem('token'),
-      tipo: processos,  
-      disabled: true,
-      exclusao: false,
-      key: editkey,   
-      history: getCurrentDate()  
-    };
-
-    let historyData = carregarBDval('entrada/'+editkey)
- 
-    const datakeys = Object.keys(historyData);
-
-    datakeys.forEach(key => { return (
-      (historyData[key] === entradaData[key]) && (historyData[key] = null)
-    )})
-    //console.log(historyData)
-    historyData.auditorkey = entradaData.auditorkey
-
-    // Write the new post's data simultaneously in the posts list and the user's post list.
-    var updates = {};
-    updates['/entrada/' + editkey] = entradaData;  
-    updates['/history/entrada/' + editkey + '/' + getCurrentDate()] = historyData;
-  
-    return database.ref().update(updates);
-  }
 
   function handleSubmitEditar(e){
     e.preventDefault();
@@ -233,7 +167,7 @@ const EntradaTabela = () => {
   function handleSubmitCancelar(e){
     e.preventDefault();
     
-    processo.setValue('')
+      processo.setValue('')
       setProcessos('processo');
       setDataEntrada('');
       setRequerente('');
@@ -253,20 +187,19 @@ const EntradaTabela = () => {
   function handleSubmit(e){  
     e.preventDefault();
     if (processo.validade()){
-      writeNewEntrada();
-      
-      processo.setValue('')
-      setProcessos('processo');
-      setDataEntrada('');
-      setRequerente('');
-      setAssunto('');
-      setAuditor('');
-      setPrioridade(false);
-      setNotificacao(false);
-      setObs('');
-      setRecebimento(false)        
-      setSuspensao('')
-      setDespacho('')  
+        writeNewEntrada()      
+        processo.setValue('')
+        setProcessos('processo');
+        setDataEntrada('');
+        setRequerente('');
+        setAssunto('');
+        setAuditor('');
+        setPrioridade(false);
+        setNotificacao(false);
+        setObs('');
+        setRecebimento(false)        
+        setSuspensao('')
+        setDespacho('')
     }
   }
 
@@ -285,130 +218,142 @@ const EntradaTabela = () => {
     }     
   }
 
-  function searchField(dadosfiltrados){
-      const lowercasedFilter = search.toLowerCase();
-      return (dadosfiltrados.filter(dado => {
-        return (dado.requerente.toLocaleLowerCase().includes(lowercasedFilter) || 
-        dado.obs.toLocaleLowerCase().includes(lowercasedFilter) || 
-        dado.processo === lowercasedFilter || 
-        dado.processo.toLocaleLowerCase().includes(lowercasedFilter))          
-      }))
+  async function atualizarFB(key, value, name){
+    try {
+      const editRef = await database.ref('entrada');
+      return editRef.child(key).update({[name]: value})      
+    } 
+    catch (error){
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      setError(errorCode + " - " + errorMessage)
+    }   
   }
-  
-   
-    const [show, setShow] = React.useState(false);
-    const [mod, setMod] = React.useState(null)
-  
-    const handleClose = () => setShow(false);
-    function handleShow (dado) {
-      //setMore({'more':!more.more,'key':dado.key})
-      setShow(true)    
-      setMod(dado)
-    }
-   
-    return (
-     
-      <>
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Mais Informações</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {mod && <><p style={{textTransform:'lowercase', color:'red'}}>alterado por {nomeAuditor(mod.auditorkey, auditores)}</p>
-        <p style={{textTransform:'lowercase', color:'red'}}>ultima alteração em { mod.history }</p>
-        
-        </>
-        }
-                  
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Fechar
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-          {mod && <Link style={{color: 'white' }}to={"HistoryData/"+mod.key}>Mais informações</Link>}
-          </Button>
-        </Modal.Footer>
-      </Modal>
 
+  async function writeNewEntrada() {
+    setLoadingbutton(true)
+    setError(null) 
+    try {
+      const newEntradaKey = database.ref().child('entrada').push().key;
+          var entradaData = {
+          processo: processo.value,
+          data: dataEntrada,
+          requerente: requerente,
+          assunto: assunto,
+          auditor: auditor,
+          prioridade: prioridade,
+          notificacao: notificacao,
+          obs: obs,
+          recebimento: recebimento,
+          suspensao: suspensao,
+          despacho: despacho,
+          auditorkey: window.localStorage.getItem('token'),
+          tipo: processos,  
+          disabled: true,
+          exclusao: false,
+          key: newEntradaKey,   
+          history: getCurrentDate()  
+       };
+      var updates = {};
+      updates['/entrada/' + newEntradaKey] = entradaData;  
+      //updates['/history/entrada/' + newEntradaKey + '/' + entradaData.history] = entradaData;  
+      await database.ref().update(updates);     
+      setLoadingbutton(false)
       
+    }catch(error){
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        setError(errorCode + " - " + errorMessage)
+        setLoadingbutton(false)       
+    }
+  }
+
+  async function updateEntrada() { 
+    setLoadingbutton(true)
+    setError(null) 
+    try {
+      var entradaData = {
+        processo: processo.value,
+        data: dataEntrada,
+        requerente: requerente,
+        assunto: assunto,
+        auditor: auditor,
+        prioridade: prioridade,
+        notificacao: notificacao,
+        obs: obs,
+        recebimento: recebimento,
+        suspensao: suspensao,
+        despacho: despacho,
+        auditorkey: window.localStorage.getItem('token'),
+        tipo: processos,  
+        disabled: true,
+        exclusao: false,
+        key: editkey,   
+        history: getCurrentDate()  
+      };
+  
+      let historyData = await carregarBDval('entrada/'+editkey)   
+      const datakeys = Object.keys(historyData);
+  
+      datakeys.forEach(key => { return (
+        (historyData[key] === entradaData[key]) && (historyData[key] = null)
+      )})
+      historyData.auditorkey = entradaData.auditorkey
+      // Write the new post's data simultaneously in the posts list and the user's post list.
+      var updates = {};
+      updates['/entrada/' + editkey] = entradaData;  
+      updates['/history/entrada/' + editkey + '/' + getCurrentDate()] = historyData;
+    
+      await database.ref().update(updates);
+      setLoadingbutton(false)
+    }catch (error) {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      setError(errorCode + " - " + errorMessage)
+      setLoadingbutton(false)       
+    }    
+  }
+    return (     
+      <>
+      <ModalEntrada show={show} onHide={handleClose} mod={mod} auditores={auditores} />      
       <div style={{ width: '90%', margin: 'auto', marginBottom:'80px', padding: '10px'}}>
-        <div style={{width: '25%',float: 'left'}}>FILTROS MAIS UTILIZADOS
-          <div>
-          <button id='auditor' value={window.localStorage.getItem('token')} className={
+      <div style={{width: '25%',float: 'left'}}>FILTROS MAIS UTILIZADOS
+      <div>
+        <Filtrosmais id='auditor' value={window.localStorage.getItem('token')} className={
             filtros.auditor === window.localStorage.getItem('token') ? stylesB.filterOn : stylesB.filterOff
-            } onClick={handleFilter}>{auditores && nomeAuditor(window.localStorage.getItem('token'), auditores)}</button>
-            <button id='prioridade' value={!filtro.prioridade} className={filtro.prioridade ? stylesB.filterOnP : stylesB.filterOff} onClick={handleFilter}>Prioridade</button>
-            <button id='recebimento' value={filtro.recebimento} className={filtro.recebimento ? stylesB.filterOn : stylesB.filterOff} onClick={handleFilter}>Não Recebidos</button>
-            <button id='notificacao' value={!filtro.notificacao} className={filtro.notificacao ? stylesB.filterOn : stylesB.filterOff} onClick={handleFilter}>Notificado</button>
-            <button id='exclusao' value={!filtro.exclusao} className={filtro.exclusao ? stylesB.filterOnP : stylesB.filterOff} onClick={handleFilter}>Excluídos</button>
-            
-          </div>
+            } onClick={handleFilter} name={auditores && nomeAuditor(window.localStorage.getItem('token'), auditores)}/>
+        <Filtrosmais id='prioridade' value={!filtro.prioridade} className={filtro.prioridade ? stylesB.filterOnP : stylesB.filterOff} onClick={handleFilter} name='Prioridade'/>
+        <Filtrosmais id='recebimento' value={filtro.recebimento} className={filtro.recebimento ? stylesB.filterOn : stylesB.filterOff} onClick={handleFilter} name='Não Recebidos' />
+        <Filtrosmais id='notificacao' value={!filtro.notificacao} className={filtro.notificacao ? stylesB.filterOn : stylesB.filterOff} onClick={handleFilter} name='Notificado'/>
+        <Filtrosmais id='exclusao' value={!filtro.exclusao} className={filtro.exclusao ? stylesB.filterOnP : stylesB.filterOff} onClick={handleFilter} name='Excluídos'/>
         </div>
+       </div> 
+       
         <div style={{width: '75%', float: 'left'}}>OUTROS FILTROS
-          <div style={{display: 'flex'}}>              
-              <label>Tipo
-                <div style={{display: 'block'}}>
-                  <select id='tipo' name='tipo' onChange={handleFilter}  value={filtros.tipo} >
-                    <option value=''>TODOS</option>
-                    <option key='0' value='processo'>PROCESSO</option>
-                    <option key='1' value='oficio'>OFÍCIO</option>     
-                  </select>
-                </div> 
-              </label>  
-              <div style={{display: 'flex', marginLeft:'15px'}}>      
+          <div style={{display: 'flex'}}>  
+              <FiltroSelecao label='Tipo' id='tipo' name='tipo' onChange={handleFilter} value={filtros.tipo} options={[{name: 'PROCESSO', value:'processo'}, {name: 'OFÍCIO', value:'oficio'}]} nameoption='name' />              
             {assuntos && 
-              <label>Assuntos
-                <div style={{display: 'block'}}>
-                  <select id='assunto' name='assunto' onChange={handleFilter}  value={filtros.assunto} >
-                    <option value=''>TODOS</option>
-                      {assuntos.map((option) => <option key={option.key} value={option.key}>{option.assunto}</option>)}       
-                  </select>
-                </div> 
-              </label> } 
-              </div>  
-              <div style={{display: 'flex', marginLeft:'15px'}}>
+              <FiltroSelecao label='Assuntos' id='assunto' name='assunto' onChange={handleFilter} 
+              value={filtros.assunto} options={assuntos} nameoption='assunto' /> }             
+             
             {auditores && 
-              <label>Auditores
-                <div style={{display: 'block'}}>
-                  <select id='auditor' name='auditor' onChange={handleFilter}  value={filtros.auditor} >
-                    <option value=''>TODOS</option>
-                      {auditores.map((option) => <option key={option.key} value={option.key}>{option.nome}</option>)}       
-                  </select>
-                </div> 
-              </label> }   
-            </div>                  
-            <div style={{display: 'flex', marginLeft:'15px'}}>
-              <label>Suspensão
-                <div style={{display: 'block'}}>
-                  <select id='suspensao' name='suspensao' onChange={handleFilter} >
-                    <option value=''>TODOS</option>
-                    <option key='0' value='NÃO'>NÃO</option>
-                    <option key='1' value='SIM'>SIM</option>
-                  </select>
-                </div> 
-              </label>
-            </div>
-            <div style={{display: 'flex', marginLeft:'15px'}}>
-              <label>DESPACHO
-                <div style={{display: 'block'}}>
-                  <select id='despacho' name='despacho' onChange={handleFilter} >
-                    <option value=''>TODOS</option>
-                    <option key='0' value='NÃO'>NÃO</option>
-                    <option key='1' value='SIM'>SIM</option>
-                  </select>
-                </div> 
-              </label>
-            </div>               
+              <FiltroSelecao label='Auditores' id='auditor' name='auditor' onChange={handleFilter} 
+              value={filtros.auditor} options={auditores} nameoption='nome' /> }                        
+            
+            <FiltroSelecao label='Suspensão' id='suspensao' name='suspensao' onChange={handleFilter} 
+              value={filtros.auditor} options={[{name: 'NÃO', value:'NÃO'}, {name: 'SIM', value:'SIM'}]} nameoption='name' value={filtros.suspensao}/>         
+           
+            <FiltroSelecao label='Despacho' id='despacho' name='despacho' onChange={handleFilter} 
+              value={filtros.despacho} options={[{name: 'NÃO', value:'NÃO'}, {name: 'SIM', value:'SIM'}]} nameoption='name' value={filtros.suspensao}/>        
+                      
             <div style={{display: 'flex', marginLeft:'15px'}}>
               <label>Busca
                 <div style={{display: 'block'}}>
-                  <input type='text' name='search' id='search' value={search} onChange={handleSearch} />                    
-                  
+                  <input type='text' name='search' id='search' value={search} 
+                  onChange={handleSearch} />             
                 </div> 
               </label>
-            </div>            
-            
+            </div>   
           </div>        
         </div>
       </div>
@@ -417,52 +362,45 @@ const EntradaTabela = () => {
         <tbody>
           {carregando ? <p style={{marginLeft:'10px'}}>Carregando... Aguarde</p> : 
           <>         
-          {searchField(multiPropsFilter(dados,filtrosSelecionados(filtro, filtrosColetados, filtros))).map((dado) => {
+          {searchField(multiPropsFilter(dados,filtrosSelecionados(filtro, filtrosColetados, filtros)),search).map((dado) => {
             return (   
               (!dado.exclusao || filtro.exclusao) &&               
               <tr key={dado.key} className={(dado.prioridade && !dado.recebimento) && stylesC.prioridade}>                           
                 <td>
-                  {dado.tipo === 'oficio' ? <>OF. {dado.processo}</> : dado.processo} 
-                  
+                  {dado.tipo === 'oficio' ? <>OF. {dado.processo}</> : dado.processo}                   
                 </td>
                 <td className={stylesE.data}>
-                  {dado.data} 
-                 
+                  {dado.data}                  
                 </td>
                 <td className={stylesE.requerente}>
-                  {dado.requerente} 
-                  
+                  {dado.requerente}                   
                 </td> 
                 <td className={stylesE.assunto}>
-                  {assuntos && nomeAssunto(dado.assunto, assuntos)}
-                 
+                  {assuntos && nomeAssunto(dado.assunto, assuntos)}                 
                 </td>
                 <td className={stylesE.auditor}>
-                  {auditores && nomeAuditor(dado.auditor, auditores)}
-                
+                  {auditores && nomeAuditor(dado.auditor, auditores)}                
                 </td>
                 <td >
                   <input className={stylesE.inputC} type="checkbox" id='prioridade' 
                   name='prioridade'  checked={dado.prioridade} 
-                  onChange={(e) => handleChange(dado.key,e.target.checked, e.target.name)} disabled />
-                 
+                  onChange={(e) => handleChange(dado.key,e.target.checked, e.target.name)} 
+                  disabled />                 
                 </td>
                 <td>
                   <input className={stylesE.inputC} type="checkbox" id='notificacao' 
                   name='notificacao'  checked={dado.notificacao} 
-                  onChange={(e) => handleChange(dado.key,e.target.checked, e.target.name)} disabled />
-                
+                  onChange={(e) => handleChange(dado.key,e.target.checked, e.target.name)} 
+                  disabled />                
                 </td>
                 <td className={stylesE.obs}>
                   {dado.obs} 
-                 
-                 
                 </td>
                 <td>
                   <input className={stylesE.inputC} type="checkbox" id='recebimento' 
                   name='recebimento'  checked={dado.recebimento} 
-                  onChange={(e) => handleChange(dado.key,e.target.checked, e.target.name)} disabled={edit} />
-                 
+                  onChange={(e) => handleChange(dado.key,e.target.checked, e.target.name)} 
+                  disabled={edit} />                 
                 </td>
                 <td>
                   <select className={stylesE.selectSimNao} id='suspensao' name='suspensao' 
@@ -471,116 +409,24 @@ const EntradaTabela = () => {
                     <option disabled value="">Selecione</option>
                     <option key='0' value='NÃO'>NÃO</option>
                     <option key='1' value='SIM'>SIM</option>
-                  </select>   
-                 
+                  </select>                    
                 </td>
                 <td>
                   <select className={stylesE.selectSimNao} id='despacho' name='despacho' 
-                  value={dado.despacho} 
-                  onChange={(e) => handleChange(dado.key,e.target.value, e.target.name)} disabled={edit} >
+                  value={dado.despacho} onChange={(e) => handleChange(dado.key,e.target.value, e.target.name)} disabled={edit} >
                     <option disabled value="">Selecione</option>
                     <option key='0' value='NÃO'>NÃO</option>
                     <option key='1' value='SIM'>SIM</option>
-                  </select>
-                 
-                </td>        
-                <td>
-                  {(edit )  ? 
-                  <button className={stylesB.buttonMore} onClick={(e) => handleShow(dado)}>Mais...</button>
-                   : dado.exclusao ?
-                     <>
-                    <button className={stylesB.buttonEdit} onClick={(e) => handleRecuperar(dado.key)}>Recuperar</button>
-                    <div className={stylesB.dividerVertical}/>
-                    <button className={stylesB.buttonMore} onClick={(e) => handleShow(dado)}>Mais...</button>
-                    </>
-                    :
-                    <>
-                    <button className={stylesB.buttonEdit} onClick={(e) => handleEditar(dado.key)}>Editar</button>
-                    <div className={stylesB.dividerVertical}/>
-                    <button className={stylesB.buttonDelete} onClick={(e) => handleExcluir(dado.key)}>Excluir</button>                
-                    <div className={stylesB.dividerVertical}/>
-                    <button className={stylesB.buttonMore} onClick={(e) => handleShow(dado)}>Mais...</button>
-                    </>
-                  }                
-                </td>          
+                  </select>                 
+                </td> 
+                  <Acao edit={edit} handleShow={handleShow} dado={dado} handleRecuperar={handleRecuperar} handleExcluir={handleExcluir} handleEditar={handleEditar} />         
               </tr>
             )})}                          
           </>}       
     </tbody>
   </table>            
-    <div className={styles.container}>
-    <form onSubmit={handleSubmit}  >
-      <div className={styles.row}>
-      <div className={styles.col25}>
-          <label htmlFor="processo" className={styles.label}>
-            <select className={styles.select} id='processos' name='processos' value={processos} 
-              onChange={(e) => setProcessos(e.target.value)} style={{fontWeight:'bold'}} >
-              <option value='processo'>Processo</option>
-              <option value='oficio'>Ofício</option>
-            </select>    
-          </label>  
-        </div>
-        <div style={{paddingTop: '12px'}}>
-          <Input type="text" id="processo" name="processo" label="Processo" 
-          placeholder="12345/2021"  {...processo} />         
-        </div>
-      </div>
-      <div className={styles.row}>
-        <div className={styles.col25}>
-          <label htmlFor="dataEntrada" className={styles.label}>
-            Data da Entrada:      
-          </label>  
-        </div>
-        <div className={styles.col75}>
-          <input  className={styles.input} type="date" name="dataEntrada" id="dataEntrada"  
-          value={dataEntrada} 
-          onChange={(e) => setDataEntrada(e.target.value)} required   />
-        </div>
-      </div>
-      <div className={styles.row}>
-        <div className={styles.col25}>
-          <label htmlFor="requerente" className={styles.label}>
-            Requerente:
-          </label>
-        </div>        
-        <Input type="text" id="requerente" name="requerente" label="Requerente" value={requerente} 
-        onChange={(e) => setRequerente(e.target.value)} required="required" />
-      </div>
-      <div className={styles.row}>
-        {assuntos && 
-        <Select label="Assunto" name="assunto" value={assunto} 
-        options={assuntos} onChange={setAssunto}/> }
-      </div>
-      <div className={styles.row}>
-        {auditores && 
-        <Select label="Auditor" name="auditor" value={auditor} 
-        options={auditores} onChange={setAuditor}/> }      
-      </div>
-      <div className={styles.row}>
-        <Checkbox  label="Proridade" name="prioridade" onChange={setPrioridade} checked={prioridade} />
-      </div>
-      <div className={styles.row}>
-        <Checkbox label="Notificar" name="notificacao" onChange={setNotificacao} checked={notificacao}/>
-      </div>
-      <div className={styles.row}>
-        <div className={styles.col25}>
-          <label htmlFor="obs" className={styles.label}>
-          Observações:      
-          </label>  
-        </div>
-        <div className={styles.col75} >
-          <textarea ref={refInput} id="obs" name="obs" value={obs} 
-          onChange={(e) => setObs(e.target.value)} className={styles.textarea}/>
-        </div>        
-          {edit ? 
-            <div style={{float:'right', paddingTop: '1.2rem'}}> 
-              <button className={stylesB.buttonCancel} onClick={handleSubmitCancelar}>Cancelar</button>
-            <div className={stylesB.divider}/>
-            <button className={stylesB.button} onClick={handleSubmitEditar}>Editar</button></div>: <div style={{float:'right', paddingTop: '1.2rem'}}><ButtonForm type='submit'>Enviar</ButtonForm> </div>}
-      </div>
-      </form>
-    </div>
-            </>
+    <FormEntrada handleSubmit={handleSubmit} processos={processos} setProcessos={setProcessos} processo={processo} dataEntrada={dataEntrada} setDataEntrada={setDataEntrada} setRequerente={setRequerente} requerente={requerente} assuntos={assuntos} assunto={assunto} setAssunto={setAssunto} auditores={auditores} auditor={auditor} setAuditor={setAuditor} prioridade={prioridade} setPrioridade={setPrioridade} notificacao={notificacao} setNotificacao={setNotificacao} refInput={refInput} obs={obs} setObs={setObs} edit={edit} handleSubmitCancelar={handleSubmitCancelar} loadingbutton={loadingbutton} handleSubmitEditar={handleSubmitEditar} error={error}/>
+  </>
   )
 }
 

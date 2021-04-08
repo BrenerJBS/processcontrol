@@ -1,73 +1,103 @@
 import React from 'react'
-import { useParams } from 'react-router'
+import { Navigate, useParams } from 'react-router'
 import HistoryDatathead from './HistoryDatathead';
 import { snapshotToArray } from '../Helper/SnaptoArray';
 import { database } from '../../utils/firebaseUtils';
 import { nomeAuditor } from '../Helper/Auditor';
 import { nomeAssunto } from '../Helper/Assunto';
 import {getCurrentDate} from '../Helper/DateCurrent'
-import {carregarBDval} from '../../utils/FirebaseData'
+
 
 import stylesB from '../../Form/Button.module.css'
+import Error from '../Helper/Error';
+
 
 
 const HistoryData = () => {
   const params = useParams();
+  
+
 
   const [auditores, setAuditores] = React.useState(null)
   const [assuntos, setAssuntos] = React.useState(null)
   const [dados, setDados] = React.useState(null)
   const [carregando, setCarregando] = React.useState(true)
+  const [error, setError] = React.useState(null);
+  const dataRef = database.ref('entrada/'+params.keyline);
+  const [newData,setNewData] = React.useState(null);
+  const [redirect, setRedirect ] = React.useState(false);
 
-  React.useEffect(()=> {
-    const lista = 'lista_auditores'
-    const auditoresRef = database.ref(lista);
-    auditoresRef.once('value', (snapshot) => {
-      setAuditores(snapshotToArray(snapshot));            
-  });
+  React.useEffect(() => {    
+      dataRef.once('value', (snapshot) => {     
+        setNewData(snapshot.val()) 
+      });  
+  })
+
+
+  React.useEffect(()=> {    
+      const lista = 'lista_auditores'
+      const auditoresRef = database.ref(lista);
+      auditoresRef.once('value', (snapshot) => {
+        setAuditores(snapshotToArray(snapshot));            
+    });
+    
+    
   },[])
 
   React.useEffect(()=> {
-    const assuntoRef = database.ref('lista_assuntos');
-    assuntoRef.once('value', (snapshot) => {
-      setAssuntos(snapshotToArray(snapshot));       
-  });  
+  
+      const assuntoRef = database.ref('lista_assuntos');
+      assuntoRef.once('value', (snapshot) => {
+        setAssuntos(snapshotToArray(snapshot));       
+    }); 
+    
+     
   },[])
 
-  React.useEffect(()=> {
-    const dataRef = database.ref('history/entrada/'+params.keyline);
-    dataRef.on('value', (snapshot) => {
-      setDados(snapshotToArray(snapshot)); 
-      
-      setCarregando(false);  
-  });
+  React.useEffect(()=> {   
+      const dataRef = database.ref('history/entrada/'+params.keyline);
+      dataRef.on('value', (snapshot) => {
+        setDados(snapshotToArray(snapshot));         
+        setCarregando(false);  });
     
   },[params])
 
- 
-
-  function handleRecuperar(dadoRecuperado){
-    let newData = carregarBDval('entrada/'+params.keyline)
-    let historyData = newData
-
-    const datakeys = Object.keys(newData);     
-      datakeys.forEach(key => {
-        if (dadoRecuperado[key] !== undefined && key !== 'key'){
-          return ((historyData[key] !== dadoRecuperado[key]) && (newData[key] =  dadoRecuperado[key]))
-        }          
-      })
-      newData.history = getCurrentDate()
-      newData.auditorkey = window.localStorage.getItem('token')  
-      // Write the new post's data simultaneously in the posts list and the user's post list.
-      var updates = {};
-      updates['/entrada/' + params.keyline] = newData;  
-      updates['/history/entrada/' + params.keyline + '/' + getCurrentDate()] = historyData;    
-      return database.ref().update(updates);    
+   function handleRecuperar(dadoRecuperado){
+     try {
+      let historyData = newData  
+      let datakeys = Object.keys(newData)
+      console.log(datakeys)
+        datakeys.forEach(key => {
+          if (dadoRecuperado[key] !== undefined && key !== 'key'){
+            return ((historyData[key] !== dadoRecuperado[key]) && (newData[key] =  dadoRecuperado[key]))
+          }          
+        })
+        newData.history = getCurrentDate()
+        newData.auditorkey = window.localStorage.getItem('token')  
+        // Write the new post's data simultaneously in the posts list and the user's post list.
+        var updates = {};
+        updates['/entrada/' + params.keyline] = newData;  
+        updates['/history/entrada/' + params.keyline + '/' + getCurrentDate()] = historyData;    
+        database.ref().update(updates);   
+        setRedirect(true)
+        
+      }catch (error){
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        setError(errorCode + " - " + errorMessage)
+      }
+      
+     
   }
  
+  if (redirect){
+    return <Navigate to='/Entrada' />
+  }else return (
+    <>
+    
 
-  return (
     <div className="animeLeft">
+      {error && <Error error={error} />}
       {carregando ? <p style={{marginLeft:'10px'}}>Carregando... </p> : 
         <table class="containerExcel">
           <HistoryDatathead />
@@ -117,6 +147,7 @@ const HistoryData = () => {
         </table>
       }
     </div>
+    </>
   )
 }
 
