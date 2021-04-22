@@ -1,18 +1,14 @@
-import React from 'react'
+import React from "react";
 
 const Head = (props) => {
   React.useEffect(() => {
-    document.title = props.title + " | SRI - Controle de Processos"
-    document.querySelector('meta[name=description]').setAttribute('content', props.description)
+    document.title = props.title + " | SRI - Controle de Processos";
+    document
+      .querySelector("meta[name=description]")
+      .setAttribute("content", props.description);
+  }, [props]);
 
-  }, [props]
-  );
+  return <></>;
+};
 
-  return (
-    <>
-      
-    </>
-  )
-}
-
-export default Head
+export default Head;

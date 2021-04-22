@@ -1,6 +1,5 @@
-.wrapper{
+.wrapper {
   margin-bottom: 1rem;
-
 }
 
 .input {
@@ -14,15 +13,12 @@
   transition: 0.2s;
   padding: 12px;
   box-sizing: border-box;
-
 }
 
-
-
 .input:hover,
-.input:focus{
+.input:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #4caf50;
   background: white;
   box-shadow: 0 0 0 3px #98ff98;
 }
@@ -34,7 +30,7 @@
   padding-bottom: 0.5rem;
 }
 
-.error{
+.error {
   color: red;
   font-size: 0.875rem;
   margin-top: 0.25rem;

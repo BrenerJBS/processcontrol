@@ -1,4 +1,4 @@
-.containerExcel{
+.containerExcel {
   border-collapse: collapse;
   margin: 25px 0;
   font-size: 0.9em;
@@ -6,34 +6,32 @@
   min-width: 400px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
-.containerExcel table{
+.containerExcel table {
   text-align: left;
   position: relative;
-  border-collapse: collapse; 
+  border-collapse: collapse;
 }
-.containerExcel th{
+.containerExcel th {
   background: #301934;
   color: white;
   position: sticky;
   top: 0; /* Don't forget this, required for the stickiness */
   box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
-  z-index: 1
+  z-index: 1;
 }
 .containerExcel thead tr {
   background-color: #301934;
   color: #ffffff;
   text-align: left;
-  
 }
 
 .containerExcel th,
 .containerExcel td {
-    padding: 2px 2px;
-    
+  padding: 2px 2px;
 }
 
 .containerExcel tbody tr {
-  border-bottom: thin  solid #dddddd;
+  border-bottom: thin solid #dddddd;
 }
 
 .containerExcel tbody tr:nth-of-type(even) {

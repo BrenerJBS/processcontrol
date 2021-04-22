@@ -1,14 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Spectral:wght@700&display=swap');
-.title{
-  font-family: 'Spectral', georgia;
- line-height: 1;
- font-size: 3rem;
- margin: 1rem 0;
- position: relative;
- z-index: 1;
+@import url("https://fonts.googleapis.com/css2?family=Spectral:wght@700&display=swap");
+.title {
+  font-family: "Spectral", georgia;
+  line-height: 1;
+  font-size: 3rem;
+  margin: 1rem 0;
+  position: relative;
+  z-index: 1;
 }
-.title::after{
-  content: '';
+.title::after {
+  content: "";
   display: block;
   width: 1.5rem;
   height: 1.5rem;
@@ -18,5 +18,4 @@
   left: -5px;
   border-radius: 0.2rem;
   z-index: -1;
-
 }

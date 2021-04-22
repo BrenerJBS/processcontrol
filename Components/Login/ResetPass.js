@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const ResetPass = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  return <div></div>;
+};
 
-export default ResetPass
+export default ResetPass;

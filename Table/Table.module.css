@@ -1,0 +1,60 @@
+.FilterText {
+  font-weight: bold;
+  margin: 10px 10px 10px 10px;
+  display: inline-block;
+  vertical-align: top;
+  color: #191919;
+}
+.FilterTextSearch {
+  font-weight: bold;
+  margin: 10px 10px 10px 10px;
+  display: inline-block;
+  color: #191919;
+  margin-top: 44px;
+}
+
+.FilterButtons {
+  margin: 10px 10px 10px 10px;
+  max-width: 40vh;
+}
+
+.FilterSelect {
+  margin: 10px 10px 10px 10px;
+}
+.FilterLabel {
+  margin: 0 10px 0 0;
+}
+
+.FilterSearch {
+  display: block;
+  width: 100%;
+  min-width: 200px;
+  border-radius: 0.4rem;
+  transition: 0.2s;
+  box-sizing: border-box;
+  text-transform: uppercase;
+}
+
+.FilterSearch:hover,
+.FilterSearch:focus {
+  outline: none;
+  border-color: #4caf50;
+  background: white;
+  box-shadow: 0 0 0 3px #98ff98;
+}
+.FilterSelectOpt {
+  display: block;
+
+  border-radius: 0.4rem;
+  transition: 0.2s;
+  box-sizing: border-box;
+  text-transform: uppercase;
+}
+
+.FilterSelectOpt:focus,
+.FilterSelectOpt:hover {
+  outline: none;
+  border-color: #4caf50;
+  background: white;
+  box-shadow: 0 0 0 3px #98ff98;
+}

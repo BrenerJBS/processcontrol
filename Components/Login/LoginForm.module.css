@@ -1,16 +1,16 @@
-.form{
+.form {
   margin-bottom: 2rem;
 }
 
-.lost{
- display: inline-block; 
- color: #666;
- padding: 0.5rem 0;
- line-height: 1;
+.lost {
+  display: inline-block;
+  color: #666;
+  padding: 0.5rem 0;
+  line-height: 1;
 }
 
-.lost::after{
-  content: '';
+.lost::after {
+  content: "";
   height: 2px;
   width: 100%;
   background: currentColor;

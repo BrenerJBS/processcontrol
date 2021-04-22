@@ -1,15 +1,13 @@
-import React from 'react';
-import Rotas from './rotas';
-import { UserStore } from './UserContext';
-
+import React from "react";
+import Rotas from "./rotas";
+import { UserStore } from "./UserContext";
 
 const App = () => {
-        return (      
-      <UserStore>
+  return (
+    <UserStore>
       <Rotas />
-      </UserStore>
-        )
-  }
-
+    </UserStore>
+  );
+};
 
 export default App;

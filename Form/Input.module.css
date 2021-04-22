@@ -1,4 +1,6 @@
-.input[type=text], .select, .textarea {
+.input[type="text"],
+.select,
+.textarea {
   border: 1px solid #eee;
   display: block;
   width: 100%;
@@ -12,7 +14,7 @@
   text-transform: uppercase;
 }
 
-.input[type=date] {
+.input[type="date"] {
   border: 1px solid #eee;
   display: block;
   font-size: 1rem;
@@ -24,44 +26,42 @@
   box-sizing: border-box;
 }
 
-.input[type=checkbox] {
-  transform : scale(2); 
+.input[type="checkbox"] {
+  transform: scale(2);
   float: center;
-  text-align:center;
+  text-align: center;
   margin-top: 20px;
 }
 
-
 .select:focus,
-.select:hover{
+.select:hover {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #4caf50;
   background: white;
   box-shadow: 0 0 0 3px #98ff98;
 }
 
 .textarea:focus,
-.textarea:hover{
+.textarea:hover {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #4caf50;
   background: white;
   box-shadow: 0 0 0 3px #98ff98;
 }
 
 .input:hover,
-.input:focus{
+.input:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: #4caf50;
   background: white;
   box-shadow: 0 0 0 3px #98ff98;
-  
 }
 
 /* Style the label to display next to the inputs */
 .label {
   padding: 12px 12px 12px 0;
   display: inline-block;
- 
+
   font-weight: bold;
 }
 
@@ -95,11 +95,11 @@
   clear: both;
 }
 
-
-
 /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
 @media screen and (max-width: 500px) {
-  .col25, .col75, input[type=submit] {
+  .col25,
+  .col75,
+  input[type="submit"] {
     width: 100%;
     margin-top: 0;
   }

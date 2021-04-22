@@ -1,10 +1,11 @@
 .button {
-  font-size: 1rem ;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-size: 1rem;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
   cursor: pointer;
   border: none;
   border-radius: 0.4rem;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   padding: 0.8rem 1.2rem;
   box-sizing: border-box;
@@ -15,48 +16,51 @@
 .button:hover,
 .button:focus {
   outline: none;
-  box-shadow: 0 0 0 3px #98ff98, 0 0 0 4px #4CAF50;
-
+  box-shadow: 0 0 0 3px #98ff98, 0 0 0 4px #4caf50;
 }
-.button:disable{
+.button:disable {
   opacity: 0.5rem;
   cursor: wait;
 }
 
-.buttonMore{
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+.buttonMore {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
   cursor: pointer;
   border: none;
   border-radius: 0.4rem;
-  background-color: #1E90FF;
+  background-color: #1e90ff;
   color: white;
   box-sizing: border-box;
   transition: 0.1s;
 }
 
-.filterOn{
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+.filterOn {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
   cursor: pointer;
   border: none;
   border-radius: 0.4rem;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   box-sizing: border-box;
   transition: 0.1s;
 }
-.filterOff{
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+.filterOff {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
   cursor: pointer;
   border: none;
   border-radius: 0.4rem;
-  background-color: #DCDCDC;
+  background-color: #dcdcdc;
   color: white;
   box-sizing: border-box;
   transition: 0.1s;
 }
 
-.filterOnP{
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+.filterOnP {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
   cursor: pointer;
   border: none;
   border-radius: 0.4rem;
@@ -69,39 +73,34 @@
 .filterOn:hover,
 .filterOn:focus {
   outline: none;
-  box-shadow: 0 0 0 1px #98ff98, 0 0 0 2px #4CAF50;
-
+  box-shadow: 0 0 0 1px #98ff98, 0 0 0 2px #4caf50;
 }
 
 .filterOnP:hover,
 .filterOnP:focus {
   outline: none;
   box-shadow: 0 0 0 1px #ca3433, 0 0 0 2px #c21807;
-
 }
 
 .filterOff:hover,
 .filterOff:focus {
   outline: none;
-  box-shadow: 0 0 0 1px #d9dddc, 0 0 0 2px #DCDCDC;
-
+  box-shadow: 0 0 0 1px #d9dddc, 0 0 0 2px #dcdcdc;
 }
-
-
 
 .buttonMore:hover,
 .buttonMore:focus {
   outline: none;
-  box-shadow: 0 0 0 1px #4169E1, 0 0 0 2px #1E90FF;
-
+  box-shadow: 0 0 0 1px #4169e1, 0 0 0 2px #1e90ff;
 }
 
-.buttonEdit{
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+.buttonEdit {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
   cursor: pointer;
   border: none;
   border-radius: 0.4rem;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   box-sizing: border-box;
   transition: 0.1s;
@@ -110,16 +109,16 @@
 .buttonEdit:hover,
 .buttonEdit:focus {
   outline: none;
-  box-shadow: 0 0 0 1px #98ff98, 0 0 0 2px #4CAF50;
-
+  box-shadow: 0 0 0 1px #98ff98, 0 0 0 2px #4caf50;
 }
 
-.buttonDelete{
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+.buttonDelete {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
   cursor: pointer;
   border: none;
   border-radius: 0.4rem;
-  background-color: #800000	;
+  background-color: #800000;
   color: white;
   box-sizing: border-box;
   transition: 0.1s;
@@ -128,24 +127,24 @@
 .buttonDelete:hover,
 .buttonDelete:focus {
   outline: none;
-  box-shadow: 0 0 0 1px tomato, 0 0 0 2px #800000	;
-
+  box-shadow: 0 0 0 1px tomato, 0 0 0 2px #800000;
 }
 
-.divider{
-  width:5px;
-  height:auto;
-  display:inline-block;
+.divider {
+  width: 5px;
+  height: auto;
+  display: inline-block;
 }
 
-.dividerVertical{
-  height:3px;
-  display:block;
+.dividerVertical {
+  height: 3px;
+  display: block;
 }
 
-.buttonCancel{
-  font-size: 1rem ;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+.buttonCancel {
+  font-size: 1rem;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
   cursor: pointer;
   border: none;
   border-radius: 0.4rem;
@@ -161,8 +160,4 @@
 .buttonCancel:focus {
   outline: none;
   box-shadow: 0 0 0 3px tomato, 0 0 0 4px #800000;
-
 }
-
-
-
