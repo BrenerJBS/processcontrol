@@ -16,6 +16,7 @@ const Home = () => {
         title="Controle de Processos SRI"
         description="Informações de Controle de Processos SRI"
       />
+     
     </div>
   );
 };

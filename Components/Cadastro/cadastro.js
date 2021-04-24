@@ -8,7 +8,7 @@ const Cadastro = () => {
         title="Cadastro"
         description="Processo encaminhados para setor de Cadastro"
       />
-      Cadastro
+      Cadastrossdasd
     </div>
   );
 };

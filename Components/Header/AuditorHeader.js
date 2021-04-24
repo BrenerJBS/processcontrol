@@ -8,6 +8,9 @@ const AuditorHeader = (props) => {
       <NavLink activeStyle={{ color: "tomato" }} to="/" end>
         Home
       </NavLink>
+      <NavLink activeStyle={{ color: "tomato" }} to="conta">
+        Conta
+      </NavLink>
       <NavLink activeStyle={{ color: "tomato" }} to="entrada">
         Entrada
       </NavLink>

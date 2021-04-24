@@ -1,0 +1,58 @@
+.info{
+  text-transform: uppercase;
+  padding: 15px 15px;
+
+}
+
+.item{
+  display: flex;
+  height: 30px;
+  
+}
+
+.itemDesc{
+  margin: auto 0;
+  margin-left: 4px;
+}
+
+.itemTitle{
+  font-weight: bold;
+  margin-right: 5px;
+  margin: auto 0;
+}
+.checkbox{  
+  margin: auto 0;
+  margin-left: 15px; 
+  transform: scale(1.5);
+  
+}
+.checkbox:hover:enabled,
+.checkbox:focus:enabled {
+  outline: none;
+  border-color: #4caf50;
+  background: white;
+  box-shadow: 0 0 0 2px #98ff98;
+}
+
+.selectdiv{
+  top: 0;
+}
+
+.select {
+  display: block;  
+  border-radius: 0.4rem;
+  transition: 0.2s;
+  box-sizing: border-box;
+  text-transform: uppercase;  
+  height: 30px;
+  margin: auto 0;
+  margin-left: 15px;   
+}
+
+.select:focus,
+.select:hover {
+  outline: none;
+  border-color: #4caf50;
+  background: white;
+  box-shadow: 0 0 0 3px #98ff98;
+}
